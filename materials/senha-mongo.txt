@@ -1,3 +1,0 @@
-fmIeVkNiUHjPIL7e
-
-mongodb+srv://admin:fmIeVkNiUHjPIL7e@cluster0.xcgh6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
