@@ -29,7 +29,7 @@
 ## Installation
 
 ```bash
-$ npm install
+$ npm i
 ```
 
 ## Running the app
@@ -56,6 +56,21 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+```
+## Commands Utils
+
+```bash
+# Install cli nest in terminal
+$ npm i -g @nestjs/cli
+
+# create Module
+$ nest g module <nameModule>
+
+# create Controller
+$ nest g controller <nameController>
+
+# create Service
+$ nest g service <nameService>
 ```
 
 ## Support
