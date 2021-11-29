@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CategoriasService } from './categorias.service';
 import { AtualizarCategoriaDto } from './dtos/atualizar-categoria.dto';
 import { CriarCategoriaDto } from './dtos/criar-categoria.dto';
@@ -17,15 +17,34 @@ export class CategoriasController {
    }
 
    @Get()
-   async consultarCategorias(): Promise<Array<Categoria>> {
-      return await this.categoriasService.consultarTodasCategorias();
+   async consultarCategorias(
+      @Query() params: string[]): Promise<Array<Categoria> | Categoria> {
+      const idCategoria = params['idCategoria']
+      const idJogador = params['idJogador']
+
+      if (idCategoria) {
+         return await this.categoriasService.consultarCategoriaPeloId(idCategoria)
+      }
+
+      if (idJogador) {
+         return await this.categoriasService.consultarCategoriaDoJogador(idJogador)
+      }
+
+      return await this.categoriasService.consultarTodasCategorias()
+
    }
 
-   @Get('/:categoria')
-   async consultarCategoriaPeloId(
-      @Param('categoria') categoria: string): Promise<Categoria> {
-         return await this.categoriasService.consultarCategoriaPeloId(categoria);
-   }
+
+   // @Get()
+   // async consultarCategorias(): Promise<Array<Categoria>> {
+   //    return await this.categoriasService.consultarTodasCategorias();
+   // }
+
+   // @Get('/:categoria')
+   // async consultarCategoriaPeloId(
+   //    @Param('categoria') categoria: string): Promise<Categoria> {
+   //       return await this.categoriasService.consultarCategoriaPeloId(categoria);
+   // }
 
    @Put('/:categoria')
    @UsePipes(ValidationPipe)

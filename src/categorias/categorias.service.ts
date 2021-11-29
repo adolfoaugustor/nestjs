@@ -54,23 +54,67 @@ export class CategoriasService {
    }
 
    async atribuirCategoriaJogador(params: string[]): Promise<void> {
-      const categoria = params['categoria'];
-      const idJogador = params['idJogador'];
-      
-      const categoriaEncontrada = await this.categoriaModel.findOne({categoria}).exec();
-      const jogadorJaCadastradoCategoria = await this.categoriaModel.find({categoria}).where('jogadores').in(idJogador).exec();
-      
-      await this.jogadoresService.consultarJogadorPeloId(idJogador)
 
-      if(!categoriaEncontrada){
-         throw new BadRequestException(`Categoria ${categoria} não cadastrada!`);
+      const categoria = params['categoria']
+      const idJogador = params['idJogador']
+
+      const categoriaEncontrada = await this.categoriaModel.findOne({categoria}).exec()
+      const jogadorJaCadastradoCategoria = 
+                              await this.categoriaModel
+                                 .findOne()
+                                 .where('jogadores')
+                                 .in(idJogador)
+                                 .exec() 
+
+      /*
+      Desafio
+      Escopo da exceção realocado para o próprio Categorias Service
+      Verificar se o jogador informado já se encontra cadastrado
+      */                                            
+
+      //await this.jogadoresService.consultarJogadorPeloId(idJogador)
+     
+      const jogadores = await this.jogadoresService.consultarTodosJogadores()
+
+      const jogadorFilter = jogadores.filter( jogador => jogador._id == idJogador )
+
+      if (jogadorFilter.length == 0) {
+          throw new BadRequestException(`O id ${idJogador} não é um jogador!`)
+      }
+      
+      if (!categoriaEncontrada) {
+          throw new BadRequestException(`Categoria ${categoria} não cadastrada!`)
       }
 
-      if(jogadorJaCadastradoCategoria.length > 0){
-         throw new BadRequestException(`Jogador ${idJogador} já cadastrado na categoria ${categoria}!`);
+      if(jogadorJaCadastradoCategoria) {
+          throw new BadRequestException(`Jogador ${idJogador} já cadastrado na Categoria ${jogadorJaCadastradoCategoria.categoria}!`)
       }
 
-      categoriaEncontrada.jogadores.push(idJogador);      
-      await this.categoriaModel.findOneAndUpdate({categoria}, {$set: categoriaEncontrada}).exec();
+      categoriaEncontrada.jogadores.push(idJogador)
+      await this.categoriaModel.findOneAndUpdate({categoria},{$set: categoriaEncontrada}).exec() 
    }
+
+
+   async consultarCategoriaDoJogador(idJogador: any): Promise<Categoria> {
+
+      /*
+      Desafio
+      Escopo da exceção realocado para o próprio Categorias Service
+      Verificar se o jogador informado já se encontra cadastrado
+      */
+
+      //await this.jogadoresService.consultarJogadorPeloId(idJogador)                                   
+
+      const jogadores = await this.jogadoresService.consultarTodosJogadores()
+
+      const jogadorFilter = jogadores.filter( jogador => jogador._id == idJogador )
+
+      if (jogadorFilter.length == 0) {
+         throw new BadRequestException(`O id ${idJogador} não é um jogador!`)
+      }
+
+      return await this.categoriaModel.findOne().where('jogadores').in(idJogador).exec() 
+
+   }
+
 }
