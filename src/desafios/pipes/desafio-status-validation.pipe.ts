@@ -12,7 +12,7 @@ export class DesafioStatusValidacaoPipe implements PipeTransform {
       const status = value.status.toUpperCase();
 
       if (!this.ehStatusValido(status)) {
-      throw new BadRequestException(`${status} é um status inválido`);
+         throw new BadRequestException(`${status} é um status inválido`);
       }
 
       return value;
